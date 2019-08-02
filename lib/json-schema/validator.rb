@@ -233,6 +233,10 @@ module JSON
       @errors
     end
 
+    def coerce
+      valid = validate
+      valid ? @data : false
+    end
 
     class << self
       def validate(schema, data,opts={})
@@ -241,6 +245,11 @@ module JSON
         rescue JSON::Schema::ValidationError, JSON::Schema::SchemaError
           return false
         end
+      end
+
+      def coerce(schema, data, opts={})
+        validator = new(schema, data, opts.merge(:insert_defaults => true))
+        validator.coerce
       end
 
       def validate_json(schema, data, opts={})
